@@ -1,0 +1,30 @@
+# RedBook
+
+## Overview
+
+This program is a version controlled project in which I'm exploring learning modern OpenGL. I'm using [GLEW](http://glew.sourceforge.net/) for extension loading, and [GLM](http://glm.g-truc.net/0.9.5/index.html) for math operations but otherwise am working directly with the Win32 and OpenGL APIs. Using these technologies, I plan on working through the most recent edition of the OpenGL programming guide (the "red book")
+
+## Motivation
+
+I've always wanted to learn how to do graphics programming. I toyed with DirectX and OpenGL in the past, however never really set out to fully learn either API. I'd like to make a renderer for some of the physics simulations I have programmed in the past (and other's i'd like to work on.) After working through this text, I hope to be able to implement the types of graphical projects I want to start programming.
+
+## Status
+
+I've completed the first chapter of the text. I've begun reading the second chapter (shaders), and should have more to update soon.
+
+## Bugs / ToDo:
+
+  No known bugs at the moment.
+
+  Read Chapter 2, and compile list of assignments.
+
+## Program notes
+
+ * Requires a video card capable of creating an OpenGL 4.3 Core context **NOTE:** this is the context used by the book, so this is what I've coded in. I may expand the context-creation portion of the application later if I decide I want to target other machines (like if I want to work on my old laptop.)
+
+ * This program is a learning project, and as such is likely to be a little rough around the edges. I try and keep my code fairly clean, but as I'm still learning both OpenGL and the Win32 API, things might get a little messy here or there. Hopefully I can keep things from getting out of hand.
+
+ * To compile, make sure GLEW and GLM headers are properly located in $(ProjectDir)/INC/ and the GLEW static library files are be placed in $(ProjectDir)/LIB/
+ * You may need to compile GLEW libraries for your version of Visual Studio. This project was created/set-up with Visual Studio 2013 Professional
+
+ * Function and class descriptions are found in header files. Comments may be sparse within code, I focus more on the "why" of code for comments. The "how" and "what" should be covered by the code itself.
