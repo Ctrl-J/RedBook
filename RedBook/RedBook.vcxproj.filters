@@ -54,5 +54,7 @@
   <ItemGroup>
     <None Include="BUILD\Debug\ch1_triangle.glvs" />
     <None Include="BUILD\Debug\ch1_triangle.glfs" />
+    <None Include="BUILD\Debug\ch2_uniform_block.glvs" />
+    <None Include="BUILD\Debug\ch2_uniform_block.glfs" />
   </ItemGroup>
 </Project>

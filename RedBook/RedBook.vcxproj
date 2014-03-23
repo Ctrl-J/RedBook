@@ -173,6 +173,8 @@
   <ItemGroup>
     <None Include="BUILD\Debug\ch1_triangle.glfs" />
     <None Include="BUILD\Debug\ch1_triangle.glvs" />
+    <None Include="BUILD\Debug\ch2_uniform_block.glfs" />
+    <None Include="BUILD\Debug\ch2_uniform_block.glvs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -33,18 +33,69 @@ std::string ShaderUtility::ReadShader( const std::string &filename )
     return contents;
 }
 
-void ShaderUtility::OutputError( GLuint program_id )
+void ShaderUtility::OutputError( GLuint identifier, ErrorType error_code )
 {
+    std::ofstream file( "shader_error_log.txt" );
     GLsizei length;
-    glGetProgramiv( program_id, GL_INFO_LOG_LENGTH, &length );
 
-    GLchar* log = new GLchar[length + 1];
-    glGetProgramInfoLog( program_id, length, &length, log );
+    if( error_code == ErrorType::program_link )
+    {
+        glGetProgramiv( identifier, GL_INFO_LOG_LENGTH, &length );
+    }
+    else if( error_code == ErrorType::shader_compile )
+    {
+        glGetShaderiv( identifier, GL_INFO_LOG_LENGTH, &length );
+    }
 
-    MessageBoxA( NULL, log, "Shader Linking Failed", MB_OK | MB_ICONERROR );
-    std::cerr << "Shader linking failed: " << log << std::endl;
+    std::vector<char> info_log;
 
-    delete[] log;
+    if( length <= 0 )
+    {
+        MessageBox( NULL, L"Info log reports zero size.", L"Info log error", MB_OK | MB_ICONERROR );
+        return;
+    }
+    else
+    {
+        info_log.resize( length + 1, ' ' );
+    }
+    
+    if( error_code == ErrorType::program_link )
+    {
+        glGetProgramInfoLog( identifier, length, &length, &info_log[0] );
+    }
+    else if( error_code == ErrorType::shader_compile )
+    {
+        glGetShaderInfoLog( identifier, GL_INFO_LOG_LENGTH, &length, &info_log[0] );
+    }
+
+    file << "Shader program reports error:\n\n";
+   
+    bool end_of_line = false;
+
+    for( unsigned int position = 0; position < info_log.size(); position++ )
+    {
+        if( ( position % 80 ) == 0 )
+        {
+            end_of_line = true;
+        }
+
+        // break on non-word characters
+        if( end_of_line == true )
+        {
+            if( false == ( ( ( info_log[position] >= 'a' ) && ( info_log[position] <= 'z' ) ) ||
+                           ( ( info_log[position] >= 'A' ) && ( info_log[position] <= 'Z' ) ) ) )
+            {
+                file << std::endl;
+                end_of_line = false;
+            }
+        }
+
+        file << info_log[position];
+    }
+
+    file << std::endl;
+
+    MessageBox( NULL, L"Check shader_error_log.txt", L"Shader program creation failed", MB_OK | MB_ICONERROR );
 }
 
 GLuint ShaderUtility::LoadShader( std::vector<ShaderInfo> &input )
@@ -81,7 +132,7 @@ GLuint ShaderUtility::LoadShader( std::vector<ShaderInfo> &input )
             // We throw detailed shader messages into the debug build
             // Release version just errors and exits.
 #ifdef _DEBUG
-            ShaderUtility::OutputError( program );
+            ShaderUtility::OutputError( current_shader->shader_id, ErrorType::shader_compile );
 #else
             MessageBox( NULL, L"Error compiling shader.", L"Initialization ERROR", MB_OK | MB_ICONERROR);
 #endif
@@ -100,7 +151,7 @@ GLuint ShaderUtility::LoadShader( std::vector<ShaderInfo> &input )
     if( linked == GL_FALSE )
     {
 #ifdef _DEBUG
-        ShaderUtility::OutputError( program );
+        ShaderUtility::OutputError( program, ErrorType::program_link );
 #else
         MessageBox( NULL, L"Error linking shader", L"Initialization ERROR", MB_OK | MB_ICONERROR);
 #endif

@@ -38,6 +38,15 @@ private:
 
     std::vector<GLuint> vertex_array_objects;
     std::vector<GLuint> buffer_objects;
-    
+
+    enum class uniform_block_identifiers
+    {
+        translation,
+        scale,
+        rotation,
+        enabled,
+        num_uniforms
+    };
+
     const GLuint num_vertices;
 };

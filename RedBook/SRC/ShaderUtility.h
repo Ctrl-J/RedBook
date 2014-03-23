@@ -8,6 +8,12 @@ struct ShaderInfo
     GLuint shader_id;
 };
 
+enum class ErrorType
+{
+    shader_compile,
+    program_link
+};
+
 //
 // This class is designed to handle the reading and compiling of shaders.
 // It doesn't handle linking, or shader managemeng. Simply reading shader code
@@ -29,6 +35,6 @@ private:
     static void DeleteShaders( std::vector<ShaderInfo> &input );
 
     // Outputs detailed shader error information
-    static void OutputError( GLuint program_id );
+    static void OutputError( GLuint identifier, ErrorType error_code );
 };
 
