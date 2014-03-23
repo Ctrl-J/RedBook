@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="SRC\Application.cc" />
     <ClCompile Include="SRC\ChapterOne.cc" />
+    <ClCompile Include="SRC\ChapterTwoUniformBlock.cc" />
     <ClCompile Include="SRC\main.cc" />
     <ClCompile Include="SRC\Precompiled.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -165,12 +166,13 @@
   <ItemGroup>
     <ClInclude Include="SRC\Application.h" />
     <ClInclude Include="SRC\ChapterOne.h" />
+    <ClInclude Include="SRC\ChapterTwoUniformBlock.h" />
     <ClInclude Include="SRC\Precompiled.h" />
     <ClInclude Include="SRC\ShaderUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BUILD\Debug\triangle.glfs" />
-    <None Include="BUILD\Debug\triangle.glvs" />
+    <None Include="BUILD\Debug\ch1_triangle.glfs" />
+    <None Include="BUILD\Debug\ch1_triangle.glvs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

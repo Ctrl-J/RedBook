@@ -1,19 +1,19 @@
 #include <Precompiled.h>
-#include <ChapterOne.h>
+#include <ChapterTwoUniformBlock.h>
 
-ChapterOne::ChapterOne( void ) : num_vertices( 6 )
+ChapterTwo::ChapterTwo( void ) : num_vertices( 6 )
 {
     vertex_array_objects.resize( static_cast< int >( vertex_array_object_identifiers::num_arrays ) );
     buffer_objects.resize( static_cast< int >( buffer_object_identifiers::num_buffers ) );
 
 }
 
-ChapterOne::~ChapterOne( void )
+ChapterTwo::~ChapterTwo( void )
 {
 
 }
 
-void ChapterOne::Initialize( void )
+void ChapterTwo::Initialize( void )
 {
     glGenVertexArrays( static_cast< int >( vertex_array_object_identifiers::num_arrays ), &vertex_array_objects[0] );
     glBindVertexArray( vertex_array_objects[static_cast< int >( vertex_array_object_identifiers::triangles )] );
@@ -36,12 +36,12 @@ void ChapterOne::Initialize( void )
     ShaderInfo current_shader;
 
     current_shader.type = GL_VERTEX_SHADER;
-    current_shader.filename = "ch1_triangle.glvs";
+    current_shader.filename = "triangle.glvs";
     current_shader.shader_id = GL_NONE;
     shaders.push_back( current_shader );
     
     current_shader.type = GL_FRAGMENT_SHADER;
-    current_shader.filename = "ch1_triangle.glfs";
+    current_shader.filename = "triangle.glfs";
     current_shader.shader_id = GL_NONE;
     shaders.push_back( current_shader );
     
@@ -59,7 +59,7 @@ void ChapterOne::Initialize( void )
     glClearColor( 0.2f, 0.4f, 0.3f, 1.0f );
 }
 
-void ChapterOne::Draw( void )
+void ChapterTwo::Draw( void )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -69,7 +69,7 @@ void ChapterOne::Draw( void )
     glFlush();
 }
 
-void ChapterOne::Step( double time_step )
+void ChapterTwo::Step( double time_step )
 {
 
 }

@@ -30,6 +30,9 @@
     <ClCompile Include="SRC\ShaderUtility.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SRC\ChapterTwoUniformBlock.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SRC\Precompiled.h">
@@ -44,9 +47,12 @@
     <ClInclude Include="SRC\ShaderUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SRC\ChapterTwoUniformBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BUILD\Debug\triangle.glvs" />
-    <None Include="BUILD\Debug\triangle.glfs" />
+    <None Include="BUILD\Debug\ch1_triangle.glvs" />
+    <None Include="BUILD\Debug\ch1_triangle.glfs" />
   </ItemGroup>
 </Project>
