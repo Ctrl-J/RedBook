@@ -78,9 +78,9 @@ Application::~Application( void )
 void Application::draw( void )
 {
     // This will be expanded if we switch to a state system
-    if( chapter_two != nullptr )
+    if( chapter != nullptr )
     {
-        chapter_two->Draw();
+        chapter->Draw();
     }
 
     SwapBuffers( device_context );
@@ -313,9 +313,9 @@ bool Application::initializeWindow( void )
     window_initialized = true;
 
     // Call any initialization of the chapter demo (now that the context is up and running.)
-    if( chapter_two != nullptr )
+    if( chapter != nullptr )
     {
-        chapter_two->Initialize();
+        chapter->Initialize();
     }
 
     return true;
@@ -345,15 +345,15 @@ void Application::shutdownWindow( void )
 
 void Application::step( void )
 {
-    if( chapter_two != nullptr )
+    if( chapter != nullptr )
     {
-        chapter_two->Step( time_step );
+        chapter->Step( time_step );
     }
 }
 
 bool Application::Initialize( void )
 {   
-    chapter_two = std::make_shared<ChapterTwo>();
+    chapter = std::make_shared<ChapterOne>();
 
     if( initializeWindow() == false )
     {
