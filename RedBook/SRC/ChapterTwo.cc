@@ -1,5 +1,5 @@
 #include <Precompiled.h>
-#include <ChapterTwoUniformBlock.h>
+#include <ChapterTwo.h>
 
 ChapterTwo::ChapterTwo( void ) : num_vertices( 6 )
 {
@@ -52,6 +52,9 @@ void ChapterTwo::Initialize( void )
 
     GLuint program = ShaderUtility::LoadShader( shaders );
     glUseProgram( program );
+    glVertexAttribPointer( static_cast< int >( attribute_object_identifiers::vertex_position ), 2, GL_FLOAT,
+                           GL_FALSE, 0, BUFFER_OFFSET( 0 ) );
+    glEnableVertexAttribArray( static_cast< int >( attribute_object_identifiers::vertex_position ) );
 
     GLuint  uniform_block_index;
     GLint   uniform_block_size;
@@ -96,9 +99,6 @@ void ChapterTwo::Initialize( void )
     glBufferData( GL_UNIFORM_BUFFER, uniform_block_size, uniform_block_buffer, GL_STATIC_DRAW );
     glBindBufferBase( GL_UNIFORM_BUFFER, uniform_block_index, uniform_block);
 
-    glVertexAttribPointer( static_cast< int >( attribute_object_identifiers::vertex_position ), 2, GL_FLOAT,
-                           GL_FALSE, 0, BUFFER_OFFSET( 0 ) );
-    glEnableVertexAttribArray( static_cast< int >( attribute_object_identifiers::vertex_position ) );
 
     glClearColor( 0.2f, 0.4f, 0.3f, 1.0f );
 }

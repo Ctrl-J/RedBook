@@ -1,10 +1,8 @@
 #pragma once
 #include <Precompiled.h>
-#include <ShaderUtility.h>
+#include <ChapterBase.h>
 
-#define BUFFER_OFFSET(x)  (reinterpret_cast<const void *>(x))
-
-class ChapterTwo
+class ChapterTwo : public ChapterBase
 {
 public:
 
@@ -20,13 +18,13 @@ public:
 private:
     enum class vertex_array_object_identifiers
     {
-        triangles,
+        triangles = 0,
         num_arrays
     };
 
     enum class buffer_object_identifiers
     {
-        array_buffer,
+        array_buffer = 0,
         num_buffers
     };
 
@@ -41,7 +39,7 @@ private:
 
     enum class uniform_block_identifiers
     {
-        translation,
+        translation = 0,
         scale,
         rotation,
         enabled,

@@ -30,7 +30,10 @@
     <ClCompile Include="SRC\ShaderUtility.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SRC\ChapterTwoUniformBlock.cc">
+    <ClCompile Include="SRC\ChapterTwo.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SRC\ChapterBase.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +50,10 @@
     <ClInclude Include="SRC\ShaderUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SRC\ChapterTwoUniformBlock.h">
+    <ClInclude Include="SRC\ChapterTwo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SRC\ChapterBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

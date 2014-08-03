@@ -353,7 +353,7 @@ void Application::step( void )
 
 bool Application::Initialize( void )
 {   
-    chapter = std::make_shared<ChapterOne>();
+    chapter = std::make_shared<ChapterTwo>();
 
     if( initializeWindow() == false )
     {

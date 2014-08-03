@@ -154,8 +154,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SRC\Application.cc" />
+    <ClCompile Include="SRC\ChapterBase.cc" />
     <ClCompile Include="SRC\ChapterOne.cc" />
-    <ClCompile Include="SRC\ChapterTwoUniformBlock.cc" />
+    <ClCompile Include="SRC\ChapterTwo.cc" />
     <ClCompile Include="SRC\main.cc" />
     <ClCompile Include="SRC\Precompiled.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -165,8 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SRC\Application.h" />
+    <ClInclude Include="SRC\ChapterBase.h" />
     <ClInclude Include="SRC\ChapterOne.h" />
-    <ClInclude Include="SRC\ChapterTwoUniformBlock.h" />
+    <ClInclude Include="SRC\ChapterTwo.h" />
     <ClInclude Include="SRC\Precompiled.h" />
     <ClInclude Include="SRC\ShaderUtility.h" />
   </ItemGroup>

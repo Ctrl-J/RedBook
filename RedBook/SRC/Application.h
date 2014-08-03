@@ -1,6 +1,8 @@
 #pragma once
 #include <Precompiled.h>
+#include <ChapterBase.h>
 #include <ChapterOne.h>
+#include <ChapterTwo.h>
 
 class Application
 {
@@ -68,7 +70,7 @@ private:
     // Currently just the first chapter state. Eventually I will expand
     // this to be a polymorphic class target and possibly enable all of
     // the chapter demos to be played through some sort of interface
-    std::shared_ptr<ChapterOne> chapter;
+    std::shared_ptr<ChapterBase> chapter;
 
     std::wstring application_name;
     std::wstring class_name;

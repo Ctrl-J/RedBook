@@ -1,10 +1,8 @@
 #pragma once
 #include <Precompiled.h>
-#include <ShaderUtility.h>
+#include <ChapterBase.h>
 
-#define BUFFER_OFFSET(x)  (reinterpret_cast<const void *>(x))
-
-class ChapterOne
+class ChapterOne : public ChapterBase
 {
 public:
 
