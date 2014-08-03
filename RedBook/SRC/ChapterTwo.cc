@@ -56,16 +56,17 @@ void ChapterTwo::Initialize( void )
                            GL_FALSE, 0, BUFFER_OFFSET( 0 ) );
     glEnableVertexAttribArray( static_cast< int >( attribute_object_identifiers::vertex_position ) );
 
-    GLuint  uniform_block_index;
-    GLint   uniform_block_size;
-    GLuint   uniform_block;
-    GLvoid *uniform_block_buffer;
+    GLuint  uniform_block_index     = -1;
+    GLint   uniform_block_size      = -1;
+    GLuint  uniform_block           = -1;
+    GLvoid *uniform_block_buffer    = nullptr;
 
     uniform_block_index = glGetUniformBlockIndex( program, "Uniforms" );
+    
     glGetActiveUniformBlockiv( program, uniform_block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &uniform_block_size );
 
-    uniform_block_buffer = malloc( uniform_block_size );
-    if( uniform_block_buffer == NULL )
+    //uniform_block_buffer = 
+    if( uniform_block_buffer == nullptr )
     {
         MessageBox( NULL, L"Error allocating uniform block buffer", L"Error", MB_OK );
         exit( EXIT_FAILURE );
