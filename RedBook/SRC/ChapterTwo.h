@@ -47,4 +47,12 @@ private:
     };
 
     const GLuint num_vertices;
+
+    struct uniform_block
+    {
+        glm::vec3 translation;
+        GLfloat scale;
+        glm::vec4 rotation;
+        bool enabled;
+    };
 };

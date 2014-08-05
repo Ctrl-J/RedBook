@@ -157,6 +157,7 @@
     <ClCompile Include="SRC\ChapterBase.cc" />
     <ClCompile Include="SRC\ChapterOne.cc" />
     <ClCompile Include="SRC\ChapterTwo.cc" />
+    <ClCompile Include="SRC\GLUtility.cc" />
     <ClCompile Include="SRC\main.cc" />
     <ClCompile Include="SRC\Precompiled.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -169,6 +170,7 @@
     <ClInclude Include="SRC\ChapterBase.h" />
     <ClInclude Include="SRC\ChapterOne.h" />
     <ClInclude Include="SRC\ChapterTwo.h" />
+    <ClInclude Include="SRC\GLUtility.h" />
     <ClInclude Include="SRC\Precompiled.h" />
     <ClInclude Include="SRC\ShaderUtility.h" />
   </ItemGroup>

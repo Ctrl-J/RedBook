@@ -36,6 +36,9 @@
     <ClCompile Include="SRC\ChapterBase.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SRC\GLUtility.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SRC\Precompiled.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SRC\ChapterBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SRC\GLUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
