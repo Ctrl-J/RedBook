@@ -1,12 +1,13 @@
-#version 430 core
+#version 330 core
 
-uniform Uniforms 
+
+uniform AttributeBlock 
 {
     vec3 translation;
     float scale;
     vec4 rotation;
     bool enabled;
-};
+} attributes;
 
 in vec4 fragment_color;
 out vec4 color;

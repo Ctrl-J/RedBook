@@ -1,0 +1,7 @@
+Log Message - WARNING (2014-07-3 (22:24:6)): This is a warning message
+GL CRITICAL [2014-07-3 (22:24:47)]: GL error code: 8
+Log Message - WARNING (2014-07-3 (22:24:47)): This is a warning message
+GL CRITICAL [2014-07-4 (22:25:18)]: GL error code: 8
+Log Message - WARNING [2014-07-4 (22:25:18)]: This is a warning message
+GL CRITICAL [2014-07-4 (22:25:19)]: GL error code: 8
+Log Message - WARNING [2014-07-4 (22:25:19)]: This is a warning message

@@ -1,6 +1,7 @@
 #pragma once
 // Obvious include for a Win32 application
 #define WIN32_LEAN_AND_MEAN
+#define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 
 // GLEW is included to handle loading GL extensions, since handling all the function pointers
@@ -23,3 +24,5 @@
 #include <ctime>
 #include <iomanip>
 #include <map>
+
+#include <GLUtility.h>

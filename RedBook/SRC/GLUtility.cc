@@ -1,12 +1,24 @@
 #include <Precompiled.h>
 #include <GLUtility.h>
 
-void GLUtility::SetLogFilename( std::wstring filename )
+GLUtility::GLUtility()
 {
-    logFilename = filename;
+    logFilename = L"";
 }
+
+GLUtility::~GLUtility()
+{
+}
+
+GLUtility &GLUtility::Instance(const std::wstring &setLogFilename)
+{
+    static GLUtility utilityInstance;
+    utilityInstance.logFilename = setLogFilename;
+    return utilityInstance;
+}
+
     
-bool GLUtility::IsStringEmpty( std::wstring input )
+bool GLUtility::IsStringEmpty( const std::wstring &input )
 {
     if( input.find_first_not_of( L" \t" ) == std::wstring::npos )
     {
@@ -27,7 +39,7 @@ std::wstring GLUtility::GetTimeString( void )
     return stringStream.str();
 }
 
-void GLUtility::LogMessage( LogLevel outputLogLevel, std::wstring message)
+void GLUtility::LogMessage( LogLevel outputLogLevel, const std::wstring &message)
 {
     std::wstring timeString;
     timeString = GetTimeString();
@@ -53,7 +65,7 @@ void GLUtility::LogMessage( LogLevel outputLogLevel, std::wstring message)
     
     if( IsStringEmpty( logFilename ) )
     {
-        MessageBox( NULL, stringStream.str().c_str(), message.c_str(), MB_OK );
+        MessageBox( NULL, message.c_str(), stringStream.str().c_str(), MB_OK );
     }
     else
     {
@@ -65,7 +77,7 @@ void GLUtility::LogMessage( LogLevel outputLogLevel, std::wstring message)
     }
 }
 
-void GLUtility::LogGLMessage( LogLevel outputLogLevel, GLuint ErrorStatus)
+void GLUtility::LogGLMessage( LogLevel outputLogLevel, GLenum ErrorStatus)
 {
     std::wstring timeString;
     timeString = GetTimeString();
@@ -88,26 +100,56 @@ void GLUtility::LogGLMessage( LogLevel outputLogLevel, GLuint ErrorStatus)
         stringStream << L"INFO [" << timeString << L"]";
         break;
     }
-    
-    std::wstring titleMessage = stringStream.str();
 
-    stringStream.str( L"" );
-    stringStream.clear();
-        
-    stringStream << "GL error code: " << ErrorStatus;
+    std::wstring errorString = L"GL error: " + getGLStringFromCode( ErrorStatus );
 
     if( IsStringEmpty( logFilename ) )
     {
-        MessageBox( NULL, titleMessage.c_str(), stringStream.str().c_str(), MB_OK );
+        MessageBox( NULL, errorString.c_str(), stringStream.str().c_str(), MB_OK );
     }
     else
     {
         std::wofstream file( logFilename, std::ios::app );
 
-        file << titleMessage << L": " << stringStream.str() << std::endl;
+        file << stringStream.str() << L" - " + errorString << std::endl;
 
         file.close();
     }
-       
+}
 
+std::wstring GLUtility::getGLStringFromCode( GLenum errorCode )
+{
+    std::wstring output;
+    switch( errorCode )
+    {
+    case GL_INVALID_ENUM:
+        output = L"Invalid Enum";
+        break;
+    case GL_INVALID_VALUE:
+        output = L"Invalid Value";
+        break;
+    case GL_INVALID_OPERATION:
+        output = L"Invalid Operation";
+        break;
+    case GL_STACK_OVERFLOW:
+        output = L"Stack Overflow";
+        break;
+    case GL_STACK_UNDERFLOW:
+        output = L"Stack Underflow";
+        break;
+    case GL_OUT_OF_MEMORY:
+        output = L"Out of Memory";
+        break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+        output = L"Invalid Framebuffer Operation";
+        break;
+    case GL_TABLE_TOO_LARGE:
+        output = L"Table Too Large";
+        break;
+    default:
+        output = L"Undefined Error (check code)";
+        break;
+    }
+
+    return output;
 }

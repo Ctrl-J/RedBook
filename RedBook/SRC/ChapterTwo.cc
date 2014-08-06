@@ -15,8 +15,20 @@ ChapterTwo::~ChapterTwo( void )
 
 void ChapterTwo::Initialize( void )
 {
+    GLenum error = GL_NO_ERROR;
     glGenVertexArrays( static_cast< int >( vertex_array_object_identifiers::num_arrays ), &vertex_array_objects[0] );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
+
     glBindVertexArray( vertex_array_objects[static_cast< int >( vertex_array_object_identifiers::triangles )] );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
 
     std::vector<GLfloat> vertices;
     vertices.resize( 2 * num_vertices );
@@ -29,8 +41,25 @@ void ChapterTwo::Initialize( void )
     vertices[10] = -0.85f;  vertices[11] =  0.90f;
 
     glGenBuffers( static_cast< int >( buffer_object_identifiers::num_buffers ), &buffer_objects[0] );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
+
     glBindBuffer( GL_ARRAY_BUFFER, buffer_objects[static_cast< int >( buffer_object_identifiers::array_buffer )] );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
+
     glBufferData( GL_ARRAY_BUFFER, sizeof( vertices[0] ) * vertices.size(), &vertices[0], GL_STATIC_DRAW );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
 
     std::vector<ShaderInfo> shaders;
     ShaderInfo current_shader;
@@ -52,25 +81,46 @@ void ChapterTwo::Initialize( void )
 
     GLuint program = ShaderUtility::LoadShader( shaders );
     glUseProgram( program );
-    glVertexAttribPointer( static_cast< int >( attribute_object_identifiers::vertex_position ), 2, GL_FLOAT,
-                           GL_FALSE, 0, BUFFER_OFFSET( 0 ) );
-    glEnableVertexAttribArray( static_cast< int >( attribute_object_identifiers::vertex_position ) );
-
-    GLuint  uniform_block_index     = -1;
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
+    
+    GLuint  uniform_block_index     = 999;
     GLint   uniform_block_size      = -1;
-    GLuint  uniform_block           = -1;
+    GLuint  uniform_block           = 999;
     GLvoid *uniform_block_buffer    = nullptr;
 
-    uniform_block_index = glGetUniformBlockIndex( program, "Uniforms" );
-    
-    glGetActiveUniformBlockiv( program, uniform_block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &uniform_block_size );
-
-    //uniform_block_buffer = 
-    if( uniform_block_buffer == nullptr )
+    uniform_block_index = glGetUniformBlockIndex( program, "AttributeBlock\0" );
+    error = glGetError();
+    if( ( error != GL_NO_ERROR ) || (uniform_block_index == GL_INVALID_INDEX ) )
     {
-        MessageBox( NULL, L"Error allocating uniform block buffer", L"Error", MB_OK );
-        exit( EXIT_FAILURE );
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+        GLUtility::Instance().LogMessage(GLUtility::LogLevel::LOG_ERROR, L"GetUniformBlockIndex"); 
     }
+    glGetActiveUniformBlockiv( program, uniform_block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &uniform_block_size );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+        GLUtility::Instance().LogMessage(GLUtility::LogLevel::LOG_ERROR, L"GetActiveUniformBlockiv"); 
+    }
+
+    glVertexAttribPointer( static_cast< int >( attribute_object_identifiers::vertex_position ), 2, GL_FLOAT,
+                           GL_FALSE, 0, BUFFER_OFFSET( 0 ) );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
+    glEnableVertexAttribArray( static_cast< int >( attribute_object_identifiers::vertex_position ) );
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
+    }
+
 
     GLfloat scale = 0.5f;
     GLfloat translation[] = { 0.1f, 0.1f, 0.0f };
