@@ -75,6 +75,105 @@ Application::~Application( void )
 {
 }
 
+bool Application::Initialize( void )
+{   
+    chapter = std::make_shared<ChapterTwo>();
+
+    if( initializeWindow() == false )
+    {
+        MessageBox( NULL, L"Failed to initialize window.", L"SYSTEM ERROR", MB_OK | MB_ICONERROR );
+        initialized = false;
+        window_activated = false;
+
+        return false;
+    }
+    
+    // Here we initialize the timing system.
+    LARGE_INTEGER timing_query;
+    if( false == QueryPerformanceFrequency( &timing_query ) )
+    {
+        initialized = false;
+        return false;
+    }
+
+    timing_frequency = static_cast<double>( timing_query.QuadPart ) / 1000.0;
+    QueryPerformanceCounter( &timing_query );
+    counter_start = timing_query.QuadPart;
+    last_time = getTime();
+
+    initialized = true;
+
+    return true;
+}
+
+bool Application::Run( void )
+{
+    MSG message;
+    ZeroMemory( &message, sizeof( message ) );
+
+    while( done == false )
+    {
+        if( PeekMessage( &message, NULL, 0, 0, PM_REMOVE ) )
+        {
+            TranslateMessage( &message );
+            DispatchMessage( &message );
+        }
+
+        if( ( WM_QUIT == message.message ) || ( false == initialized ) )
+        {
+            done = true;
+            break;
+        }
+
+        // ESC is the default quit. Probably will change this later if 
+        // I need a more robust state system.
+        if( IsKeyDown( VK_ESCAPE ) )
+        {
+            done = true;
+            break;
+        }
+
+        // Fixed time-step, full speed render. To accomplish this, we
+        // use an accumulator.
+
+        // First, we get the time since the last render.
+        double new_time = getTime();
+        double frame_time = new_time - last_time;
+        if( max_frame_time < frame_time )
+        {
+            frame_time = max_frame_time;
+        }
+        last_time = new_time;
+
+        // Then we add it to the accumulator.
+        accumulated_time += frame_time;
+
+        // We then subtract off fixed chunks of time and simulate according
+        // to that time step. This gives us a fixed simulation time-step, while
+        // allowing us to render with a variable time-step.
+        while( accumulated_time > time_step )
+        {
+            accumulated_time -= time_step;
+            step();
+        }
+
+        draw();
+    }
+
+    return true;
+}
+
+
+void Application::Shutdown( void )
+{
+    if( chapter != nullptr )
+    {
+        chapter->Shutdown();
+    }
+
+    shutdownWindow();
+}
+
 void Application::draw( void )
 {
     // This will be expanded if we switch to a state system
@@ -127,21 +226,21 @@ void Application::initializeExtensions( void )
         return;
     }
 
-    render_context = wglCreateContext( device_context );
+    temp_render_context = wglCreateContext( device_context );
     if( NULL == render_context )
     {
         MessageBox( NULL, L"Could not get OpenGL context", L"Renderer Initialization", MB_OK | MB_ICONERROR );
         return;
     }
 
-    result = wglMakeCurrent( device_context, render_context );
+    result = wglMakeCurrent( device_context, temp_render_context );
     if( GL_TRUE != result )
     {
-        MessageBox( NULL, L"Could not make device context current.", L"Renderer Initialization", MB_OK | MB_ICONERROR );
+        MessageBox( NULL, L"Could not make render context current.", L"Renderer Initialization", MB_OK | MB_ICONERROR );
         return;
     }
 
-    if( GLEW_OK != glewInit() )
+    if( GLUtility::Instance().InitializeGLExtensions() == false )
     {
         MessageBox( NULL, L"Could not load extensions", L"Renderer Initialization", MB_OK | MB_ICONERROR );
         return;
@@ -149,8 +248,6 @@ void Application::initializeExtensions( void )
 
     // Release the temporary context.
     wglMakeCurrent( NULL, NULL );
-    wglDeleteContext( render_context );
-    render_context = NULL;
     ReleaseDC( h_wnd, device_context );
     device_context = NULL;
 }
@@ -201,7 +298,7 @@ void Application::initializeRenderer( void )
         return;
     }
 
-    // OpenGL 4.3 core context
+    // OpenGL 3.3 core context
     int attribute_list[] =
     {
         WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
@@ -221,6 +318,13 @@ void Application::initializeRenderer( void )
     if( GL_TRUE != result )
     {
         MessageBox( NULL, L"Could not make the context current.", L"Render Initialization Error", MB_OK | MB_ICONERROR );
+        return;
+    }
+    
+    // Reload the extensions
+    if( GLUtility::Instance().InitializeGLExtensions() == false )
+    {
+        MessageBox( NULL, L"Could not load extensions", L"Renderer Initialization", MB_OK | MB_ICONERROR );
         return;
     }
 
@@ -329,6 +433,15 @@ bool Application::resizeWindow( unsigned int width, unsigned int height )
 
 void Application::shutdownWindow( void )
 {
+    // Release the context
+    wglMakeCurrent( NULL, NULL );
+    wglDeleteContext( render_context );
+    wglDeleteContext( temp_render_context );
+    temp_render_context = NULL;        
+    render_context = NULL;
+    ReleaseDC( h_wnd, device_context );
+    device_context = NULL;
+
     // If we maximized the window, reset the display back to default
     if( changed_resolution == true )
     {
@@ -351,99 +464,6 @@ void Application::step( void )
     }
 }
 
-bool Application::Initialize( void )
-{   
-    chapter = std::make_shared<ChapterTwo>();
-
-    if( initializeWindow() == false )
-    {
-        MessageBox( NULL, L"Failed to initialize window.", L"SYSTEM ERROR", MB_OK | MB_ICONERROR );
-        initialized = false;
-        window_activated = false;
-
-        return false;
-    }
-    
-    // Here we initialize the timing system.
-    LARGE_INTEGER timing_query;
-    if( false == QueryPerformanceFrequency( &timing_query ) )
-    {
-        initialized = false;
-        return false;
-    }
-
-    timing_frequency = static_cast<double>( timing_query.QuadPart ) / 1000.0;
-    QueryPerformanceCounter( &timing_query );
-    counter_start = timing_query.QuadPart;
-    last_time = getTime();
-
-    initialized = true;
-
-    return true;
-}
-
-bool Application::Run( void )
-{
-    MSG message;
-    ZeroMemory( &message, sizeof( message ) );
-
-    while( done == false )
-    {
-        if( PeekMessage( &message, NULL, 0, 0, PM_REMOVE ) )
-        {
-            TranslateMessage( &message );
-            DispatchMessage( &message );
-        }
-
-        if( ( WM_QUIT == message.message ) || ( false == initialized ) )
-        {
-            done = true;
-            break;
-        }
-
-        // ESC is the default quit. Probably will change this later if 
-        // I need a more robust state system.
-        if( IsKeyDown( VK_ESCAPE ) )
-        {
-            done = true;
-            break;
-        }
-
-        // Fixed time-step, full speed render. To accomplish this, we
-        // use an accumulator.
-
-        // First, we get the time since the last render.
-        double new_time = getTime();
-        double frame_time = new_time - last_time;
-        if( max_frame_time < frame_time )
-        {
-            frame_time = max_frame_time;
-        }
-        last_time = new_time;
-
-        // Then we add it to the accumulator.
-        accumulated_time += frame_time;
-
-        // We then subtract off fixed chunks of time and simulate according
-        // to that time step. This gives us a fixed simulation time-step, while
-        // allowing us to render with a variable time-step.
-        while( accumulated_time > time_step )
-        {
-            accumulated_time -= time_step;
-            step();
-        }
-
-        draw();
-    }
-
-    return true;
-}
-
-
-void Application::Shutdown( void )
-{
-    shutdownWindow();
-}
 
 
 bool Application::IsInitialized( void ) const

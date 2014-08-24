@@ -5,30 +5,23 @@ ChapterTwo::ChapterTwo( void ) : num_vertices( 6 )
 {
     vertex_array_objects.resize( static_cast< int >( vertex_array_object_identifiers::num_arrays ) );
     buffer_objects.resize( static_cast< int >( buffer_object_identifiers::num_buffers ) );
-
 }
 
 ChapterTwo::~ChapterTwo( void )
 {
-
 }
 
 void ChapterTwo::Initialize( void )
 {
+    clearColor = glm::vec3( 0.25, 0.45, 0.5 );
+    clearColorSpeed = glm::vec3( 0.2, 0.05, 0.1 );
+    scaleSpeed = 0.1;
     GLenum error = GL_NO_ERROR;
     glGenVertexArrays( static_cast< int >( vertex_array_object_identifiers::num_arrays ), &vertex_array_objects[0] );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"GenVertexArrays"); 
 
     glBindVertexArray( vertex_array_objects[static_cast< int >( vertex_array_object_identifiers::triangles )] );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"BindVertexArray"); 
 
     std::vector<GLfloat> vertices;
     vertices.resize( 2 * num_vertices );
@@ -42,24 +35,13 @@ void ChapterTwo::Initialize( void )
 
     glGenBuffers( static_cast< int >( buffer_object_identifiers::num_buffers ), &buffer_objects[0] );
     error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"GenBuffers"); 
 
     glBindBuffer( GL_ARRAY_BUFFER, buffer_objects[static_cast< int >( buffer_object_identifiers::array_buffer )] );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"BindBuffer"); 
 
     glBufferData( GL_ARRAY_BUFFER, sizeof( vertices[0] ) * vertices.size(), &vertices[0], GL_STATIC_DRAW );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"BufferData"); 
 
     std::vector<ShaderInfo> shaders;
     ShaderInfo current_shader;
@@ -79,85 +61,33 @@ void ChapterTwo::Initialize( void )
     current_shader.shader_id = GL_NONE;
     shaders.push_back( current_shader );
 
-    GLuint program = ShaderUtility::LoadShader( shaders );
-    glUseProgram( program );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    shaderProgram = ShaderUtility::LoadShader( shaders );
+    glUseProgram( shaderProgram );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"UseProgram"); 
     
-    GLuint  uniform_block_index     = 999;
-    GLint   uniform_block_size      = -1;
-    GLuint  uniform_block           = 999;
-    GLvoid *uniform_block_buffer    = nullptr;
-
-    uniform_block_index = glGetUniformBlockIndex( program, "AttributeBlock\0" );
-    error = glGetError();
-    if( ( error != GL_NO_ERROR ) || (uniform_block_index == GL_INVALID_INDEX ) )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-        GLUtility::Instance().LogMessage(GLUtility::LogLevel::LOG_ERROR, L"GetUniformBlockIndex"); 
-    }
-    glGetActiveUniformBlockiv( program, uniform_block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &uniform_block_size );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-        GLUtility::Instance().LogMessage(GLUtility::LogLevel::LOG_ERROR, L"GetActiveUniformBlockiv"); 
-    }
-
     glVertexAttribPointer( static_cast< int >( attribute_object_identifiers::vertex_position ), 2, GL_FLOAT,
                            GL_FALSE, 0, BUFFER_OFFSET( 0 ) );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"VertexAttribPointer"); 
+
     glEnableVertexAttribArray( static_cast< int >( attribute_object_identifiers::vertex_position ) );
-    error = glGetError();
-    if( error != GL_NO_ERROR )
-    {
-        GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, error );
-    }
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"EnableVertexAttribArray"); 
 
+    setupUniformBlock();
 
-    GLfloat scale = 0.5f;
-    GLfloat translation[] = { 0.1f, 0.1f, 0.0f };
-    GLfloat rotation[] = { 90.0f, 0.0f, 0.0f, 1.0f };
-    GLboolean enabled = GL_TRUE;
-   
-    const char *names[static_cast< int >( uniform_block_identifiers::num_uniforms )] =
-    {
-        "translation",
-        "scale",
-        "rotation"
-        "enabled"
-    };
+    glClearColor( clearColor.r, clearColor.g, clearColor.b, 1.0f );
 
-    GLuint  indices[static_cast< int >( uniform_block_identifiers::num_uniforms )];
-    GLint   size[static_cast< int >( uniform_block_identifiers::num_uniforms )];
-    GLint 	offset[static_cast< int >( uniform_block_identifiers::num_uniforms )];
-    GLint 	type[static_cast< int >( uniform_block_identifiers::num_uniforms )];
-
-    glGetUniformIndices( program, static_cast< int >( uniform_block_identifiers::num_uniforms ), names, indices );
-    glGetActiveUniformsiv( program, static_cast< int >( uniform_block_identifiers::num_uniforms ), indices, GL_UNIFORM_OFFSET, offset );
-    glGetActiveUniformsiv( program, static_cast< int >( uniform_block_identifiers::num_uniforms ), indices, GL_UNIFORM_SIZE, size );
-    glGetActiveUniformsiv( program, static_cast< int >( uniform_block_identifiers::num_uniforms ), indices, GL_UNIFORM_TYPE, type );
-
-    glGenBuffers( 1, &uniform_block );
-    glBindBuffer( GL_UNIFORM_BUFFER, uniform_block );
-    glBufferData( GL_UNIFORM_BUFFER, uniform_block_size, uniform_block_buffer, GL_STATIC_DRAW );
-    glBindBufferBase( GL_UNIFORM_BUFFER, uniform_block_index, uniform_block);
-
-
-    glClearColor( 0.2f, 0.4f, 0.3f, 1.0f );
+    blockAttributes = std::make_shared<UniformBlockStructure>();
+    blockAttributes->scale = 1.0;
+    blockAttributes->rotation = glm::vec4( 0.0, 0.0, 0.0, 1.0 );
+    blockAttributes->translation = glm::vec3( 0.0, 0.0, 0.0 );
+    blockAttributes->enabled = true;
 }
 
 void ChapterTwo::Draw( void )
 {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT );
 
+    updateUniformBlock( blockAttributes->translation, blockAttributes->scale, blockAttributes->rotation, blockAttributes->enabled );
     glBindVertexArray( vertex_array_objects[static_cast< int >( vertex_array_object_identifiers::triangles )] );
     glDrawArrays( GL_TRIANGLES, 0, num_vertices );
 
@@ -166,5 +96,115 @@ void ChapterTwo::Draw( void )
 
 void ChapterTwo::Step( double time_step )
 {
+    if( clearColor.r > 1.0f )
+    {
+        clearColor.r = 1.0f;
+        clearColorSpeed.r = -clearColorSpeed.r;
+    }
+    else if(clearColor.r <= 0.0f )
+    {
+        clearColor.r = 0.0f;
+        clearColorSpeed.r = -clearColorSpeed.r;
+    }
+    if( clearColor.g > 1.0f )
+    {
+        clearColor.g = 1.0f;
+        clearColorSpeed.g = -clearColorSpeed.g;
+    }
+    else if(clearColor.g <= 0.0f )
+    {
+        clearColor.g = 0.0f;
+        clearColorSpeed.g = -clearColorSpeed.g;
+    }
+    if( clearColor.b > 1.0f )
+    {
+        clearColor.b = 1.0f;
+        clearColorSpeed.b = -clearColorSpeed.r;
+    }
+    else if(clearColor.b <= 0.0f )
+    {
+        clearColor.b = 0.0f;
+        clearColorSpeed.b = -clearColorSpeed.r;
+    }
 
+    clearColor.r += clearColorSpeed.r * static_cast< float >( time_step );
+    clearColor.g += clearColorSpeed.g * static_cast< float >( time_step );
+    clearColor.b += clearColorSpeed.b * static_cast< float >( time_step );
+
+
+    if( blockAttributes != nullptr )
+    {
+        if( blockAttributes->scale >= 1.0 )
+        {
+            scaleSpeed = -scaleSpeed;
+            blockAttributes->scale = 1.0;
+        }
+        else if( blockAttributes->scale <= 0.0 )
+        {
+            scaleSpeed = -scaleSpeed;
+            blockAttributes->scale = 0.0;
+        }
+
+        blockAttributes->scale += static_cast<GLfloat>( scaleSpeed * time_step );
+    }
+}
+
+void ChapterTwo::Shutdown( void )
+{
+}
+
+void ChapterTwo::setupUniformBlock( void )
+{
+    uniformBlockIndex = glGetUniformBlockIndex( shaderProgram, "Uniforms" );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGetUniformBlockIndex -> uniformBlockIndex"); 
+
+    glGenBuffers( 1, &uniformBlockObject );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGenBuffers - uniformBlock"); 
+    
+    glBindBuffer( GL_UNIFORM_BUFFER, uniformBlockObject );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glBindBuffer - uniformBlock"); 
+
+    glGetProgramIV( shaderProgram, GL_ACTIVE_UNIFORMS, &numberOfActiveUniforms );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGetProgramIV (GL_ACTIVE_UNIFORMS) Failed" );
+
+    const char *uniformNames[static_cast< int >( uniform_identifiers::num_uniforms )] = { "rotation", "translation", "scale", "enabled" };
+
+    glGetUniformIndices( shaderProgram, static_cast<int>(uniform_identifiers::num_uniforms), uniformNames, uniformIndices );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGetUniformIndices Failed" );
+
+    glGetActiveUniformBlockIV( shaderProgram, uniformBlockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGetActiveUniformBlockIV (GL_UNIFORM_BLOCK_DATA_SIZE) Failed"); 
+    
+    glGetActiveUniformsIV( shaderProgram, static_cast<int>(uniform_identifiers::num_uniforms), uniformIndices, GL_UNIFORM_OFFSET, uniformOffsets );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGetActiveUniformsIV (GL_UNIFORM_OFFSET) Failed"); 
+
+    glGetActiveUniformsIV( shaderProgram, static_cast<int>(uniform_identifiers::num_uniforms), uniformIndices, GL_UNIFORM_SIZE, uniformSizes );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGetActiveUniformsIV (GL_UNIFORM_SIZE) Failed"); 
+    glGetActiveUniformsIV( shaderProgram, static_cast<int>(uniform_identifiers::num_uniforms), uniformIndices, GL_UNIFORM_TYPE, uniformTypes );
+    GLUtility::Instance().LogGLMessage( GLUtility::LogLevel::LOG_ERROR, L"glGetActiveUniformsIV (GL_UNIFORM_TYPE) Failed"); 
+    
+    bufferData.resize( uniformBlockSize / sizeof(GLfloat), 0 );
+    
+    glBufferData( GL_UNIFORM_BUFFER, uniformBlockSize, &bufferData[0], GL_DYNAMIC_DRAW );
+    glBindBuffer( GL_UNIFORM_BUFFER, 0 );
+}
+    
+void ChapterTwo::updateUniformBlock( const glm::vec3 &translation, const GLfloat &scale, 
+                                     const glm::vec4 &rotation, const bool &enabled )
+{
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::rotation )] / sizeof(GLfloat) + 0] = rotation.r;
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::rotation )] / sizeof(GLfloat) + 1] = rotation.g;
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::rotation )] / sizeof(GLfloat) + 2] = rotation.b;
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::rotation )] / sizeof(GLfloat) + 3] = rotation.a;
+    
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::translation )] / sizeof(GLfloat) + 0] = translation.r;
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::translation )] / sizeof(GLfloat) + 1] = translation.g;
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::translation )] / sizeof(GLfloat) + 2] = translation.b;
+    
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::scale )] / sizeof(GLfloat)] = scale;
+    bufferData[uniformOffsets[static_cast< int >( uniform_identifiers::enabled )] / sizeof(GLfloat)] = enabled;
+
+    glBindBuffer( GL_UNIFORM_BUFFER, uniformBlockObject );
+    glBufferData( GL_UNIFORM_BUFFER, uniformBlockSize, &bufferData[0], GL_STATIC_DRAW );
+    glBindBufferBase( GL_UNIFORM_BUFFER, uniformBlockIndex, uniformBlockObject);
 }

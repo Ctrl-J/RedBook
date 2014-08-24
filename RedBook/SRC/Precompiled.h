@@ -4,15 +4,15 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 
-// GLEW is included to handle loading GL extensions, since handling all the function pointers
-// seemed like an interesting exercise, but not the point of this project
-#define GLEW_STATIC
-#include <GLEW\glew.h>
-#include <GLEW\wglew.h>
+// OpenGl
+#include <gl\GL.h>
+#include <GLEXT\glext.h>
+#include <GLEXT\wglext.h>
 
-// GLM for my math functions! And the constants header (mainly for pi)
+// GLM for math functions! And the constants header (mainly for pi)
 #include <GLM\glm.hpp>
 #include <GLM\gtc\constants.hpp>
+#include <GLM\gtc\type_ptr.hpp>
 
 // Basic stream manipulation, memory (for c++11 smart pointers), and basic data structures.
 #include <iostream>

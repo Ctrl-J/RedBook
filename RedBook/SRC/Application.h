@@ -80,6 +80,7 @@ private:
 
     HDC device_context;
     HGLRC render_context;
+    HGLRC temp_render_context;
 
     double max_frame_time;
     double last_time;

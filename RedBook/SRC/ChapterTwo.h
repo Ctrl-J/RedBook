@@ -14,8 +14,12 @@ public:
     void Initialize( void );
     void Draw( void );
     void Step( double time_step );
+    void Shutdown( void );
 
 private:
+    void setupUniformBlock( void );
+    void updateUniformBlock( const glm::vec3 &translation, const GLfloat &scale, const glm::vec4 &rotation, const bool &enabled );
+
     enum class vertex_array_object_identifiers
     {
         triangles = 0,
@@ -34,25 +38,47 @@ private:
         num_attributes
     };
 
-    std::vector<GLuint> vertex_array_objects;
-    std::vector<GLuint> buffer_objects;
-
-    enum class uniform_block_identifiers
+    enum class uniform_identifiers
     {
-        translation = 0,
+        rotation = 0,
+        translation,
         scale,
-        rotation,
         enabled,
         num_uniforms
     };
 
+    std::vector<GLuint> vertex_array_objects;
+    std::vector<GLuint> buffer_objects;
+
     const GLuint num_vertices;
 
-    struct uniform_block
+    struct UniformBlockStructure
     {
         glm::vec3 translation;
         GLfloat scale;
         glm::vec4 rotation;
         bool enabled;
     };
+
+    double scaleSpeed;
+    std::shared_ptr<UniformBlockStructure> blockAttributes;
+    glm::vec3 clearColor;
+    glm::vec3 clearColorSpeed;
+
+    GLuint shaderProgram;
+
+    GLint numberOfActiveUniforms;
+
+    GLint  uniformBlockIndex;
+    GLuint uniformBlockObject;
+    GLint  uniformBlockLocation;
+    GLint  uniformBlockSize;
+    GLint  uniformBindingIndex;
+    
+    GLuint uniformIndices[static_cast<int>(uniform_identifiers::num_uniforms)];
+    GLint  uniformSizes[static_cast<int>(uniform_identifiers::num_uniforms)];
+    GLint  uniformOffsets[static_cast<int>(uniform_identifiers::num_uniforms)];
+    GLint  uniformTypes[static_cast<int>(uniform_identifiers::num_uniforms)];
+
+    std::vector<GLfloat> bufferData;
 };

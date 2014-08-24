@@ -40,11 +40,11 @@ void ShaderUtility::OutputError( GLuint identifier, ErrorType error_code )
 
     if( error_code == ErrorType::program_link )
     {
-        glGetProgramiv( identifier, GL_INFO_LOG_LENGTH, &length );
+        glGetProgramIV( identifier, GL_INFO_LOG_LENGTH, &length );
     }
     else if( error_code == ErrorType::shader_compile )
     {
-        glGetShaderiv( identifier, GL_INFO_LOG_LENGTH, &length );
+        glGetShaderIV( identifier, GL_INFO_LOG_LENGTH, &length );
     }
 
     std::vector<char> info_log;
@@ -126,7 +126,7 @@ GLuint ShaderUtility::LoadShader( std::vector<ShaderInfo> &input )
         glCompileShader( current_shader->shader_id );
 
         GLint compiled;
-        glGetShaderiv( current_shader->shader_id, GL_COMPILE_STATUS, &compiled );
+        glGetShaderIV( current_shader->shader_id, GL_COMPILE_STATUS, &compiled );
         if( compiled == GL_FALSE )
         {
             // We throw detailed shader messages into the debug build
@@ -147,7 +147,7 @@ GLuint ShaderUtility::LoadShader( std::vector<ShaderInfo> &input )
     glLinkProgram( program );
 
     GLint linked;
-    glGetProgramiv( program, GL_LINK_STATUS, &linked );
+    glGetProgramIV( program, GL_LINK_STATUS, &linked );
     if( linked == GL_FALSE )
     {
 #ifdef _DEBUG

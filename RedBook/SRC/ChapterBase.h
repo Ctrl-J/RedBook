@@ -15,4 +15,5 @@ public:
     virtual void Initialize( void ) = 0;
     virtual void Draw( void ) = 0;
     virtual void Step( double time_step ) = 0;
+    virtual void Shutdown( void ) = 0;
 };
