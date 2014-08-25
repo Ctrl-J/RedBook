@@ -6,7 +6,7 @@ class ChapterTwo : public ChapterBase
 {
 public:
 
-    ChapterTwo( void );
+    ChapterTwo( Application *appPointer );
     ~ChapterTwo( void );
     ChapterTwo( const ChapterTwo &other ) = delete;
     ChapterTwo &operator= ( const ChapterTwo &other ) = delete;
@@ -79,6 +79,9 @@ private:
     GLint  uniformSizes[static_cast<int>(uniform_identifiers::num_uniforms)];
     GLint  uniformOffsets[static_cast<int>(uniform_identifiers::num_uniforms)];
     GLint  uniformTypes[static_cast<int>(uniform_identifiers::num_uniforms)];
+
+    double commandDelay;
+    double commandTimer;
 
     std::vector<GLfloat> bufferData;
 };

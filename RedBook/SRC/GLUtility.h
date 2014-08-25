@@ -37,7 +37,7 @@ extern PFNWGLSWAPINTERVALEXTPROC            wglSwapIntervalEXT;
 class GLUtility
 {
 public:
-    static GLUtility &Instance(const std::wstring &setLogFilename = L"");
+    static GLUtility *Instance(const std::wstring &setLogFilename = L"");
     ~GLUtility();
 
     enum LogLevel
@@ -63,4 +63,6 @@ private:
     std::wstring getGLStringFromCode( GLenum errorCode );
     
     std::wstring logFilename;
+
+    static GLUtility *instance;
 };

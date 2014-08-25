@@ -6,7 +6,7 @@ class ChapterOne : public ChapterBase
 {
 public:
 
-    ChapterOne( void );
+    ChapterOne( Application *setAppPointer );
     ~ChapterOne( void );
     ChapterOne( const ChapterOne &other ) = delete;
     ChapterOne &operator= ( const ChapterOne &other ) = delete;

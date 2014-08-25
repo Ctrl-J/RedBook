@@ -1,7 +1,7 @@
 #include <Precompiled.h>
 #include <ChapterOne.h>
 
-ChapterOne::ChapterOne( void ) : num_vertices( 6 )
+ChapterOne::ChapterOne( Application *appPointer ) : ChapterBase(appPointer), num_vertices( 6 )
 {
     vertex_array_objects.resize( static_cast< int >( vertex_array_object_identifiers::num_arrays ) );
     buffer_objects.resize( static_cast< int >( buffer_object_identifiers::num_buffers ) );

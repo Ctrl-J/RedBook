@@ -32,20 +32,37 @@ PFNWGLCHOOSEPIXELFORMATARBPROC      wglChoosePixelFormatARB = NULL;
 PFNWGLCREATECONTEXTATTRIBSARBPROC   wglCreateContextAttribsARB = NULL;
 PFNWGLSWAPINTERVALEXTPROC           wglSwapIntervalEXT = NULL;
 
+GLUtility *GLUtility::instance = nullptr;
+
 GLUtility::GLUtility()
 {
     logFilename = L"";
+    instance = nullptr;
 }
 
 GLUtility::~GLUtility()
 {
+    if( instance != nullptr )
+    {
+        delete instance;
+        instance = nullptr;
+    }
 }
 
-GLUtility &GLUtility::Instance(const std::wstring &setLogFilename)
+GLUtility *GLUtility::Instance(const std::wstring &setLogFilename)
 {
-    static GLUtility utilityInstance;
-    utilityInstance.logFilename = setLogFilename;
-    return utilityInstance;
+    if( instance == nullptr )
+    {
+        instance = new GLUtility();
+        instance->logFilename = setLogFilename;
+    }
+
+    if( instance->logFilename.compare( setLogFilename.c_str() ) != 0 )
+    {
+        instance->logFilename = setLogFilename;
+    }
+
+    return instance;
 }
 
     
@@ -284,7 +301,7 @@ size_t GLUtility::TypeSize( GLenum type )
         output = sizeof( GLfloat ) * 16;
         break;
     default:
-        GLUtility::Instance().LogMessage( GLUtility::LogLevel::LOG_ERROR, L"Error finding GLsize." );
+        GLUtility::Instance()->LogMessage( GLUtility::LogLevel::LOG_ERROR, L"Error finding GLsize." );
         exit( EXIT_FAILURE );
         break;
     }

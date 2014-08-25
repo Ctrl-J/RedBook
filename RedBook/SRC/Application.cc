@@ -1,5 +1,6 @@
 #include <Precompiled.h>
 #include <Application.h>
+#include <ChapterTwo.h>
 
 // Easiest I've found to do C++ with the windows message pump. Just make sure that this pointer is 
 // set within the constructor of the application class.
@@ -77,7 +78,7 @@ Application::~Application( void )
 
 bool Application::Initialize( void )
 {   
-    chapter = std::make_shared<ChapterTwo>();
+    chapter = std::make_shared<ChapterTwo>(this);
 
     if( initializeWindow() == false )
     {
@@ -102,6 +103,8 @@ bool Application::Initialize( void )
     last_time = getTime();
 
     initialized = true;
+
+    GLUtility::Instance( L"logFile.txt" );
 
     return true;
 }
@@ -240,7 +243,7 @@ void Application::initializeExtensions( void )
         return;
     }
 
-    if( GLUtility::Instance().InitializeGLExtensions() == false )
+    if( GLUtility::Instance()->InitializeGLExtensions() == false )
     {
         MessageBox( NULL, L"Could not load extensions", L"Renderer Initialization", MB_OK | MB_ICONERROR );
         return;
@@ -322,9 +325,9 @@ void Application::initializeRenderer( void )
     }
     
     // Reload the extensions
-    if( GLUtility::Instance().InitializeGLExtensions() == false )
+    if( GLUtility::Instance()->InitializeGLExtensions() == false )
     {
-        MessageBox( NULL, L"Could not load extensions", L"Renderer Initialization", MB_OK | MB_ICONERROR );
+        GLUtility::Instance( L"Logfile.txt" )->LogMessage( GLUtility::LogLevel::LOG_CRITICAL, L"Could not load OpenGL extensions for application render context." );
         return;
     }
 
@@ -464,8 +467,6 @@ void Application::step( void )
     }
 }
 
-
-
 bool Application::IsInitialized( void ) const
 {
     return initialized;
@@ -478,7 +479,9 @@ bool Application::IsKeyDown( unsigned int keycode )
 
 bool Application::IsKeyPressed( unsigned int keycode )
 {
-    return pressed_keys[keycode];
+    bool isPressed = pressed_keys[keycode];
+    pressed_keys[keycode] = false;
+    return isPressed;
 }
 
 
@@ -490,17 +493,18 @@ LRESULT CALLBACK Application::MessageHandler( HWND handle, UINT message, WPARAM 
     case WM_KEYDOWN:
         if( ( keycode >= 0 ) && ( keycode < 256 ) )
         {
-            // If the key is already down, then it's no longer pressed,
-            // If it wasn't down, then it's pressed AND down.
-            if( pressed_keys[keycode] == true )
+            // On the first keydown
+            if( ( lParam & ( 1 << 30 ) ) == 0 )
+            {
+                pressed_keys[keycode] = true;
+            }
+
+            if( down_keys[keycode] == true )
             {
                 pressed_keys[keycode] = false;
             }
-            else if( down_keys[keycode] == false )
-            {
-                pressed_keys[keycode] = true;
-                down_keys[keycode] = true;
-            }
+
+            down_keys[keycode] = true;
         }
         break;
     case WM_KEYUP:

@@ -1,8 +1,6 @@
 #pragma once
 #include <Precompiled.h>
 #include <ChapterBase.h>
-#include <ChapterOne.h>
-#include <ChapterTwo.h>
 
 class Application
 {
